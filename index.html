@@ -14,12 +14,16 @@
         <h2>author: TzuWei Yu</h2>
     </div>
 
-
     <script>
 
 //updatingBarChart.js
 
-var setup = function(targetID){
+// const value
+
+const redrawDuration = 500;
+const step = 0.03;
+
+var setup = function(targetID) {
     //Set size of svg element and chart
     var margin = {top: 0, right: 0, bottom: 0, left: 0},
         width = 600 - margin.left - margin.right,
@@ -117,16 +121,16 @@ var redrawChart = function(targetID, newdata) {
     
     //Update bar widths
     chartRow.select(".bar").transition()
-      .duration(100)
+      .duration(redrawDuration)
       .attr("width", function(d) { return x(d.value);})
       .attr("opacity",1);
 
     //Update data labels
     chartRow.select(".label").transition()
-      .duration(100)
+      .duration(redrawDuration)
       .attr("opacity",1)
       .tween("text", function(d) { 
-        var i = d3.interpolate(+this.textContent.replace(/\,/g,''), +d.value);
+        let i = d3.interpolate(+this.textContent.replace(/\,/g,''), +d.value);
         return function(t) {
           this.textContent = Math.round(i(t));
         };
@@ -134,7 +138,7 @@ var redrawChart = function(targetID, newdata) {
 
     //Fade in categories
     chartRow.select(".category").transition()
-      .duration(100)
+      .duration(redrawDuration)
       .attr("opacity",1);
 
 
@@ -157,32 +161,44 @@ var redrawChart = function(targetID, newdata) {
 
     chartRow.transition()
         .delay(delay)
-        .duration(500)
+        .duration(redrawDuration)
         .attr("transform", function(d){ return "translate(0," + y(d.key) + ")"; });
 };
 
-var gameData = [];
-var initData = function() {
+var currData = []; // current data
+var gameData = []; // target data
+
+let initData = function() {
     d3.json("gamedata.json", function (err, data){
           if (err) return console.warn(err);
 
           gameData = data;
+          for(let i=0 ; i<gameData.length ; i++)
+          {
+              currData.push({
+                  key: gameData[i].key,
+                  value: 0
+              });
+          }
       })
 }
 
 //Pulls data
 //Since our data is fake, adds some random changes to simulate a data stream.
 //Uses a callback because d3.json loading is asynchronous
-var pullData = function(settings,callback){
-      gameData.forEach(function(d, i) {
-          // var newValue = d.value + Math.floor((Math.random()*40) - 5)
-          var newValue = d.value + Math.random() * 10;
-          d.value = newValue <= 0 ? 10 : newValue;
-      });
+var pullData = function(settings,callback) {
+      for(let i = 0 ; i < currData.length ; i++) {
+          // if(gameData[i].value == d.value) continue;
 
-      var newData = formatData(gameData);
+          let ratio = (currData[i].value / gameData[i].value) + Math.random() * step;
+          currData[i].value = gameData[i].value * Math.min(ratio, 1);
 
-      callback(settings,newData);
+          // console.log(`r: ${Math.min(ratio, 1)}, curr: ${currData[i].value}, target: ${gameData[i].value}`);
+      }
+
+      var newData = formatData(currData.slice());
+
+      callback(settings, newData);
 }
 
 //Sort data in descending order and take the top 4 values
@@ -195,7 +211,7 @@ var formatData = function(data){
 
 //I like to call it what it does
 var redraw = function(settings){
-    pullData(settings,redrawChart)
+    pullData(settings, redrawChart)
 }
 
 //setup (includes first draw)
@@ -203,10 +219,10 @@ var settings = setup('#chart');
 initData();
 redraw(settings)
 
-//Repeat every 0.8 seconds
+//Repeat 
 setInterval(function(){
     redraw(settings)
-}, 800);
+}, redrawDuration);
 
     </script>
 </body>
