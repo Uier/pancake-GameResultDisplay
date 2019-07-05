@@ -1,17 +1,18 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
-@import url('https://fonts.googleapis.com/css?family=PT+Mono&display=swap');
-@import url('https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap');
-
 @font-face {
   	font-family: custom;
-    src: local("PT Mono"), local("Roboto Mono");
+    src: url('fonts/Ubuntu-Medium.ttf'), url('fonts/NotoSansTC-Medium.otf');
     unicode-range: U+00-024F;
 }
 
 @font-face {
   	font-family: custom;
-    src: local("Noto Sans TC Medium"), local("微軟正黑體");
+    src: url('fonts/GenJyuuGothic-Medium.ttf'), url('fonts/NotoSansTC-Medium.otf'), local('微軟正黑體');
     unicode-range: U+4E00-9FFF;
+}
+
+@font-face {
+	font-family: header;
+	src: url('fonts/genkai-mincho.ttf');
 }
 
 html, body, div, span, applet, object, iframe,
@@ -34,7 +35,7 @@ time, mark, audio, video {
 	font-size: 100%;
 	font-family: custom;
 	vertical-align: baseline;
-	background: #364156;
+	background: rgb(229,230,231);
 }
 
 body {
@@ -42,12 +43,22 @@ body {
 }
 
 h1 {
-	font-size:48px;
-	color: white;
+	font-family: header;
+	font-size:96px;
+	color: rgb(42,43,43);
 	vertical-align: middle;
 	text-align: center;
 	margin-top: 5%;
-	margin-bottom: 5px;
+	margin-bottom: 1%;
+}
+
+img {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	height: 25%;
+	margin: 1%;
+	border-radius: 10px;
 }
 
 #everything {
@@ -66,28 +77,33 @@ h1 {
 }
 
 text.label {
-	fill: #777777;
-	color: #777777;
+	fill: #000;
+	color: #fff;
 	font-size: 20px;
 }
 
 text.category {
-	fill: #666666;
-	font-size: 36px;
+	fill: #fff;
+	color: #000;
+	font-size: 28px;
 }
 
 .team1 {
-	fill: #e2c051;
+	/*fill: #e2c051;*/
+	fill: rgb(84,111,175);
 }
 
 .team2 {
-	fill: #dee3ec;
+	/*fill: #dee3ec;*/
+	fill: rgb(148,37,42);
 }
 
 .team3 {
-	fill: #c58e47;
+	/*fill: #c58e47;*/
+	fill: rgb(48,98,93);
 }
 
 .team4 {
-	fill: #72dfdf;
+	/*fill: #72dfdf;*/
+	fill: rgb(239,150,45);
 }

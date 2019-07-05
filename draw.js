@@ -8,7 +8,7 @@ const step = 0.03;
 var setup = function(targetID) {
     //Set size of svg element and chart
     var margin = {
-            top: 50,
+            top: 20,
             right: 0,
             bottom: 50,
             left: 0
@@ -58,7 +58,7 @@ var redrawChart = function(settings, newdata) {
     var margin = settings.margin,
         width = settings.width,
         height = settings.height,
-        categoryIndent = settings.categoryIndent, 
+        categoryIndent = settings.categoryIndent,
         svg = settings.svg,
         x = settings.x,
         y = settings.y;
@@ -91,18 +91,27 @@ var redrawChart = function(settings, newdata) {
         .attr("transform", "translate(0," + height + margin.top + margin.bottom + ")");
 
     var teamMapping = {
-        "1小": 1,
-        "2小": 2,
-        "3小": 3,
-        "4小": 4
+        "得意的１天": 1,
+        "２螺絲": 2,
+        "３瑚礁": 3,
+        "你４在叫我嗎": 4
     };
 
-    //Add rectangles
     newRow.insert("rect")
         .attr("class", function(d) { return `bar team${teamMapping[d.key]}`; })
         .attr("x", 0)
         .attr("opacity", 0)
         .attr("height", y.rangeBand())
+        .attr("width", function(d) { return 200; }); 
+
+    //Add rectangles
+    newRow.insert("rect")
+        .attr("class", function(d) { return `bar team${teamMapping[d.key]}`; })
+        // .attr("x", 0)
+        .attr("x", function(d) { return 200; })
+        .attr("opacity", 0)
+        .attr("height", y.rangeBand())
+        // .attr("width", function(d) { return x(d.value); }); 
         .attr("width", function(d) { return x(d.value); }); 
 
     //Add value labels
@@ -126,7 +135,6 @@ var redrawChart = function(settings, newdata) {
         .attr("dx", "0.5em")
         .text(function(d) { return d.key });
 
-
     //////////
     //UPDATE//
     //////////
@@ -134,13 +142,14 @@ var redrawChart = function(settings, newdata) {
     //Update bar widths
     chartRow.select(".bar").transition()
         .duration(redrawDuration)
-        .attr("width", function(d) { return x(d.value); })
+        .attr("width", function(d) { return Math.max(x(d.value)-60,200); })
         .attr("opacity", 1);
 
     //Update data labels
     chartRow.select(".label").transition()
         .duration(redrawDuration)
         .attr("opacity", 1)
+        .attr("x", function(d) { return Math.max(x(d.value)-60,200); })
         .tween("text", function(d) { 
             let i = d3.interpolate(+this.textContent.replace(/\,/g,''), +d.value);
             return function(t) {
@@ -151,8 +160,8 @@ var redrawChart = function(settings, newdata) {
     //Fade in categories
     chartRow.select(".category").transition()
       .duration(redrawDuration)
-      .attr("opacity",1);
-
+      .attr("opacity",1)
+      .attr("x", function(d) { return Math.max(x(d.value)-d.key.length*28-85,175-d.key.length*28); })
 
     ////////
     //EXIT//
@@ -213,15 +222,15 @@ var pullData = function(settings, callback) {
 
     var newData = formatData(currData.slice());
 
-    if(modified.some(v => v))
-    {
+    // if(modified.some(v => v))
+    // {
         callback(settings, newData);
         return true;
-    }
-    else // finish
-    {
-        return false;
-    }
+    // }
+    // else // finish
+    // {
+    //     return false;
+    // }
 }
 
 //Sort data in descending order and take the top 4 values
