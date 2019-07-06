@@ -60,6 +60,30 @@ h6 {
 	margin-bottom: 1%;
 }
 
+#prog-title {
+	font-family: custom;
+	font-size: 1.5em;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	margin: 3%;
+}
+
+#prog-container {
+	position: absolute;
+	width: 22%;
+	top: 0px;
+	left: 0px;
+	margin: 6% 3%;
+	background-color: #fff;
+}
+
+#prog-bar {
+	width: 33%;
+	height: 20px;
+	background-color: rgb(53, 72, 117);
+}
+
 .chika {
 	position: absolute;
 	top: 0px;
