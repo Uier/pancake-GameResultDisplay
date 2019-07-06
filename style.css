@@ -79,7 +79,7 @@ h6 {
 }
 
 #prog-bar {
-	width: 33%;
+	width: 0%;
 	height: 20px;
 	background-color: rgb(53, 72, 117);
 }
@@ -101,20 +101,6 @@ h6 {
 	width:100%;
 	height: 100%;
 	text-align: center;
-}
-
-.progress-bar-back {
-	position: absolute;
-	top: 0;
-	left: 0;
-	margin: 1%;
-}
-
-.progress-bar-cover {
-	position: absolute;
-	top: 0;
-	left: 0;
-	margin: 1%;
 }
 
 #chart {

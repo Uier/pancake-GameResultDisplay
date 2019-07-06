@@ -2,8 +2,9 @@
 
 // const value
 
-const redrawDuration = 500;
+const redrawDuration = 1000;
 const step = 0.03;
+var rnd = 0;
 
 var setup = function(targetID) {
     //Set size of svg element and chart
@@ -72,7 +73,7 @@ var redrawChart = function(settings, newdata) {
     var barmax = d3.max(newdata, function(e) {
         return e.value;
     });
-    x.domain([0, barmax]);
+    x.domain([0, barmax*1.03]);
 
     /////////
     //ENTER//
@@ -141,6 +142,8 @@ var redrawChart = function(settings, newdata) {
     //////////
     
     //Update progress bar width
+    d3.select("#prog-bar")
+        .style("width", (rnd+1)*1.0/gameData[0].length*100 + '%');
 
     //Update bar widths
     chartRow.select(".bar").transition()
@@ -176,7 +179,6 @@ var redrawChart = function(settings, newdata) {
       .attr("transform", "translate(0," + (height + margin.top + margin.bottom) + ")")
       .remove();
 
-
     ////////////////
     //REORDER ROWS//
     ////////////////
@@ -193,49 +195,40 @@ var currData = []; // current data
 var gameData = []; // target data
 var teamList = ['得意的１天', '２螺絲', '３瑚礁', '你４在叫我嗎'];
 
-let initData = function() {
+let initData = function(callback) {
     d3.json("gamedata.json", function(err, data) {
         if(err) return console.warn(err);
 
         gameData = data;
-        for(let i=0 ; i<gameData.length ; i++)
+        for(let i=0 ; i<teamList.length ; i++)
         {
             currData.push({
                 key: teamList[i],
-                value: 0
+                value: 0,
+                uid: i+1
             });
-            for(let j=0; j<7; j++ ) d3.select('#stage-' + j).attr('src', './imgs/flag0.png');
+            for(let j=0 ; j<7 ; j++ ) d3.select('#stage-' + j).attr('src', './imgs/flag0.png');
         }
+        callback();
     })
 }
 
 //Pulls data
-//Since our data is fake, adds some random changes to simulate a data stream.
 //Uses a callback because d3.json loading is asynchronous
 var pullData = function(settings, callback) {
-    let modified = new Array(currData.length);
-    modified = modified.fill(0);
-
-    for(let i = 0 ; i < currData.length ; i++) {
-        if(gameData[i].value == currData[i].value) continue;
-
-        let ratio = (currData[i].value / gameData[i].value) + Math.random() * step;
-        currData[i].value = Math.round(gameData[i].value * Math.min(ratio, 1));
-
-        modified[i] = 1;
+    for(let i=0 ; i<gameData.length ; i++) {
+        var idx = find(gameData[i][rnd]);
+        if ( idx != -1 ) currData[idx].value += 60;
+        if ( gameData[i][rnd] != 0 )
+            d3.select('#stage-' + i).attr('src', './imgs/flag' + gameData[i][rnd] + '.png');
     }
-
     var newData = formatData(currData.slice());
+    callback(settings, newData);
+}
 
-    // if(modified.some(v => v))
-    // {
-        callback(settings, newData);
-        return true;
-    // }
-    // else // finish
-    // {
-    //     return false;
-    // }
+var find = function(idx) {
+    if ( idx == 0 ) return -1;
+    for(let i=0 ; i<4 ; i++)    if ( currData[i].uid == idx )   return i;
 }
 
 //Sort data in descending order and take the top 4 values
@@ -248,31 +241,25 @@ var formatData = function(data) {
 
 //I like to call it what it does
 var redraw = function(settings) {
-    if(pullData(settings, redrawChart))
-        setTimeout(() => {
-            redraw(settings);
-        }, redrawDuration);
+    pullData(settings, redrawChart);
 }
+
+var delayInMilliseconds = 1000; //1 second
+
+setTimeout(function() {
+  //your code to be executed after 1 second
+}, delayInMilliseconds);
 
 window.onload = function() {
     //setup (includes first draw)
     var settings = setup('#chart');
-    initData();
-    // redraw(settings);
+    var redraw2 = function() {
+        redraw(settings);
+        rnd++;
 
-    // //Repeat 
-    // let keep = true;
-    // let redrawId = setInterval(function() {
-    //     keep = redraw(settings);
-    // }, redrawDuration);
+        if(rnd != gameData[0].length) 
+            setTimeout(redraw2, redrawDuration);
+    };
 
-    // // Stop redraw
-    // while(keep) {}
-    // clearInterval(redrawId);
-
-    // // check
-    // for(let i = 0 ; i < currData.length ; i++)
-    // {
-    //     console.log(`c: ${currData[i].value}, t: ${gameData[i].value}`);
-    // }
+    initData(redraw2);
 };
