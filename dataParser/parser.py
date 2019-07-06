@@ -2,7 +2,7 @@ import csv
 import json
 
 def read_csv(file_name):
-	with open(file_name) as f:
+	with open(file_name,"r",encoding="utf-8") as f:
 		c = list(csv.reader(f))
 	return c
 
@@ -20,4 +20,5 @@ def parse_csv(csv_file):
 if __name__ == '__main__':
 	csv_file = read_csv('scoreboard.csv')
 	json_file = parse_csv(csv_file)
-	print(json_file)
+	with open('../gamedata.json', 'w') as f:
+		f.writelines(json_file)

@@ -112,8 +112,8 @@ var redrawChart = function(settings, newdata) {
         .attr("x", function(d) { return 200; })
         .attr("opacity", 0)
         .attr("height", y.rangeBand())
-        // .attr("width", function(d) { return x(d.value); }); 
-        .attr("width", function(d) { return x(d.value); }); 
+        // .attr("width", function(d) { return x(d.value); });
+        .attr("width", function(d) { return x(d.value); });
 
     //Add value labels
     newRow.append("text")
@@ -123,7 +123,7 @@ var redrawChart = function(settings, newdata) {
         .attr("opacity", 0)
         .attr("dy", ".35em")
         .attr("dx", "0.5em")
-        .text(function(d) { return d.value; }); 
+        .text(function(d) { return d.value; });
     
     //Add Headlines
     newRow.append("text")
@@ -191,6 +191,7 @@ var redrawChart = function(settings, newdata) {
 
 var currData = []; // current data
 var gameData = []; // target data
+var teamList = ['得意的１天', '２螺絲', '３瑚礁', '你４在叫我嗎'];
 
 let initData = function() {
     d3.json("gamedata.json", function(err, data) {
@@ -200,9 +201,10 @@ let initData = function() {
         for(let i=0 ; i<gameData.length ; i++)
         {
             currData.push({
-                key: gameData[i].key,
+                key: teamList[i],
                 value: 0
             });
+            for(let j=0; j<7; j++ ) d3.select('#stage-' + j).attr('src', './imgs/flag0.png');
         }
     })
 }
@@ -256,7 +258,7 @@ window.onload = function() {
     //setup (includes first draw)
     var settings = setup('#chart');
     initData();
-    redraw(settings);
+    // redraw(settings);
 
     // //Repeat 
     // let keep = true;
