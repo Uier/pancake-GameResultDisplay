@@ -97,6 +97,7 @@ var redrawChart = function(settings, newdata) {
         "你４在叫我嗎": 4
     };
 
+    //Add padding(at least containing team name)
     newRow.insert("rect")
         .attr("class", function(d) { return `bar team${teamMapping[d.key]}`; })
         .attr("x", 0)
@@ -139,6 +140,8 @@ var redrawChart = function(settings, newdata) {
     //UPDATE//
     //////////
     
+    //Update progress bar width
+
     //Update bar widths
     chartRow.select(".bar").transition()
         .duration(redrawDuration)
