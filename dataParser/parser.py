@@ -23,7 +23,7 @@ def parse_csv(csv_file):
 
 if __name__ == '__main__':
     # CLI
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 3:
         print('./parser.py <csv> <json>')
         sys.exit()
 
