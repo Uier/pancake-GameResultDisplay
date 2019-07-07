@@ -78,6 +78,15 @@ h6 {
 	background-color: #fff;
 }
 
+#prog-subtitle {
+	font-family: custom;
+	font-size: 1em;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	margin: 8% 9%;
+}
+
 #prog-bar {
 	width: 0%;
 	height: 20px;
