@@ -84,7 +84,7 @@ h6 {
 	position: absolute;
 	top: 0px;
 	left: 0px;
-	margin: 8% 9%;
+	margin: 8% 10.5%;
 }
 
 #prog-bar {
@@ -124,6 +124,7 @@ h6 {
 .stage {
 	width: 14%;
 	text-align: center;
+	display: none;
 	margin-left: 0.25%;
 	float: left;
 }

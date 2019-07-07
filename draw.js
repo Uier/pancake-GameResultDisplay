@@ -201,8 +201,10 @@ var gameData = []; // target data
 var teamList = ['得意的１天', '２螺絲', '３瑚礁', '你４在叫我嗎'];
 
 var cleanFalgs = function() {
-      for(let i=0 ; i<7 ; i++ )
-            d3.select('#stage-' + i).attr('src', './imgs/flag0.png');
+    for(let i=0 ; i<7 ; i++ )   d3.select('#stage-' + i).attr('src', './imgs/flag0.png');
+    [].forEach.call(document.getElementsByClassName('stage'), function(el) {
+        el.setAttribute('style', 'display: inline;');
+    });
 };
 
 var initData = function(callback) {
@@ -243,7 +245,7 @@ var initData2 = function(callback) {
                 position: "absolute",
                 width: "1%",
                 height: "20px",
-                left: (advRnd / totalRnd * 100) + "%",
+                left: (basicRnd / totalRnd * 100) + "%",
                 top: 0,
                 background: "red"
             });
@@ -258,8 +260,9 @@ var pullData = function(settings, callback) {
     for(let i=0 ; i<gameData.length ; i++) {
         var idx = find(gameData[i][rnd]);
         if ( idx != -1 ) currData[idx].value += 60;
-        if ( gameData[i][rnd] != 0 )
+        if ( gameData[i][rnd] != 0 ) {
             d3.select('#stage-' + i).attr('src', './imgs/flag' + gameData[i][rnd] + '.png');
+        }
     }
     var newData = formatData(currData.slice());
     callback(settings, newData);
@@ -283,29 +286,36 @@ var redraw = function(settings) {
     pullData(settings, redrawChart);
 }
 
+var btn;
+
 window.onload = function() {
-    //setup (includes first draw)
-    var settings = setup('#chart');
-    var redraw2 = function() {
-        redraw(settings);
-        rnd++;
 
-        if(rnd != basicRnd) 
-            setTimeout(redraw2, redrawDuration);
-        else
-        {
-            cleanFalgs();
-            redraw3();
+    btn = document.getElementById('btn');
+
+    btn.onclick = function() {
+        //setup (includes first draw)
+        var settings = setup('#chart');
+        var redraw2 = function() {
+            redraw(settings);
+            rnd++;
+
+            if(rnd != basicRnd) 
+                setTimeout(redraw2, redrawDuration);
+            else
+            {
+                cleanFalgs();
+                redraw3();
+            }
+        };
+
+        var redraw3 = function() {
+            redraw(settings);
+            rnd++;
+
+            if(rnd != totalRnd)
+                setTimeout(redraw3, redrawDuration);
         }
+
+        initData(redraw2);
     };
-
-    var redraw3 = function() {
-        redraw(settings);
-        rnd++;
-
-        if(rnd != totalRnd)
-            setTimeout(redraw3, redrawDuration);
-    }
-
-    initData(redraw2);
-};
+}
