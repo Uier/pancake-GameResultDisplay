@@ -18,7 +18,7 @@ def parse_csv(csv_file):
 	return json.dumps([*p])
 
 if __name__ == '__main__':
-	csv_file = read_csv('scoreboard.csv')
+	csv_file = read_csv('scoreboard2.csv')
 	json_file = parse_csv(csv_file)
-	with open('../gamedata.json', 'w') as f:
+	with open('../gamedata2.json', 'w') as f:
 		f.writelines(json_file)
