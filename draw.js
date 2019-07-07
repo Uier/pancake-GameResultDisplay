@@ -2,9 +2,13 @@
 
 // const value
 
-const redrawDuration = 1000;
+const redrawDuration = 600;
 const step = 0.03;
+
 var rnd = 0;
+var basicRnd = 0;
+var advRnd = 0;
+var totalRnd = 0;
 
 var setup = function(targetID) {
     //Set size of svg element and chart
@@ -143,7 +147,8 @@ var redrawChart = function(settings, newdata) {
     
     //Update progress bar width
     d3.select("#prog-bar")
-        .style("width", (rnd+1)*1.0/gameData[0].length*100 + '%');
+        // .transition()
+        .style("width", (rnd + 1) / totalRnd * 100 + '%');
 
     //Update bar widths
     chartRow.select(".bar").transition()
@@ -195,22 +200,56 @@ var currData = []; // current data
 var gameData = []; // target data
 var teamList = ['得意的１天', '２螺絲', '３瑚礁', '你４在叫我嗎'];
 
-let initData = function(callback) {
+var cleanFalgs = function() {
+      for(let i=0 ; i<7 ; i++ )
+            d3.select('#stage-' + i).attr('src', './imgs/flag0.png');
+};
+
+var initData = function(callback) {
+    cleanFalgs();
+    for(let i=0 ; i<teamList.length ; i++)
+    {
+        currData.push({
+            key: teamList[i],
+            value: 0,
+            uid: i+1
+        });           
+    }
+
     d3.json("gamedata.json", function(err, data) {
         if(err) return console.warn(err);
 
         gameData = data;
-        for(let i=0 ; i<teamList.length ; i++)
-        {
-            currData.push({
-                key: teamList[i],
-                value: 0,
-                uid: i+1
-            });
-            for(let j=0 ; j<7 ; j++ ) d3.select('#stage-' + j).attr('src', './imgs/flag0.png');
+        basicRnd = data[0].length;
+
+        initData2(callback);
+    });
+};
+
+var initData2 = function(callback) {
+    d3.json("gamedata2.json", function(err, data) {
+        if(err) return console.warn(err);
+
+        advRnd = data[0].length;
+        totalRnd = basicRnd + advRnd;
+        for(let i=0 ; i<data.length ; i++) {
+            gameData[i].push(...data[i]);
         }
+
+        // add adv mark
+        d3.select("#prog-container")
+            .append("div")
+            .style({
+                position: "absolute",
+                width: "1%",
+                height: "20px",
+                left: (advRnd / totalRnd * 100) + "%",
+                top: 0,
+                background: "red"
+            });
+
         callback();
-    })
+    });
 }
 
 //Pulls data
@@ -244,12 +283,6 @@ var redraw = function(settings) {
     pullData(settings, redrawChart);
 }
 
-var delayInMilliseconds = 1000; //1 second
-
-setTimeout(function() {
-  //your code to be executed after 1 second
-}, delayInMilliseconds);
-
 window.onload = function() {
     //setup (includes first draw)
     var settings = setup('#chart');
@@ -257,9 +290,22 @@ window.onload = function() {
         redraw(settings);
         rnd++;
 
-        if(rnd != gameData[0].length) 
+        if(rnd != basicRnd) 
             setTimeout(redraw2, redrawDuration);
+        else
+        {
+            cleanFalgs();
+            redraw3();
+        }
     };
+
+    var redraw3 = function() {
+        redraw(settings);
+        rnd++;
+
+        if(rnd != totalRnd)
+            setTimeout(redraw3, redrawDuration);
+    }
 
     initData(redraw2);
 };
