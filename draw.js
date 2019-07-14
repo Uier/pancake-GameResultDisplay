@@ -218,7 +218,7 @@ var initData = function(callback) {
         });           
     }
 
-    d3.json("gamedata.json", function(err, data) {
+    d3.json("gamedata1.json", function(err, data) {
         if(err) return console.warn(err);
 
         gameData = data;
